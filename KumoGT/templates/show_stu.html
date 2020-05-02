@@ -32,7 +32,7 @@
                 <a href="{% url 'basic_info' stu.id %}" class="w3-button w3-block w3-left-align">Basic Information</a> 
             </td>
             <td class="w3-center">
-                <a href="{% url 'form_upload' %}" class="w3-button w3-block w3-left-align">Documents</a>
+                <a href="{% url 'doc_upload' stu.id %}" class="w3-button w3-block w3-left-align">Documents</a>
             </td>
         </tr>
         <tr style="width:50%">
@@ -40,7 +40,7 @@
                 <a href="{% url 'degree_info' stu.id %}" class="w3-button w3-block w3-left-align">Degree Information</a>
             </td>
             <td class="w3-center">
-                <a href="{% url 'form_upload' %}" class="w3-button w3-block w3-left-align">Advising Notes</a>    
+                <a href="{% url 'doc_upload' stu.id %}" class="w3-button w3-block w3-left-align">Advising Notes</a>    
             </td>
         </tr>
     </table>

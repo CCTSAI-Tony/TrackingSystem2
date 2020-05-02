@@ -92,18 +92,13 @@ def create_doc_form(model_in, type_widget=0, extra_fields=[]):
     '''
     class Meta:
         model = model_in        # model input
-        fields = ['doc_type', 'doc', 'notes', 'appr_cs_date', 'appr_ogs_date']
+        fields = ['deg_type', 'doc_type', 'doc', 'notes']
         widgets = {
+            'deg_type': forms.Select(attrs={'class': 'w3-select w3-cell', 'style': 'width: auto;'}),
             'doc_type': forms.Select(attrs={'class': 'w3-select'})
             if type_widget == 0 else
             forms.TextInput(attrs={'class': 'w3-input'}),
             'notes': forms.Textarea(attrs={'cols': 15, 'rows': 5}),
-            'appr_cs_date': forms.SelectDateWidget
-            (attrs={'class': 'w3-select'},
-             years=[y for y in range(timezone.now().year - 7, timezone.now().year + 8)]),
-            'appr_ogs_date': forms.SelectDateWidget
-            (attrs={'class': 'w3-select'},
-             years=[y for y in range(timezone.now().year - 7, timezone.now().year + 8)])
         }
 
     for field in extra_fields:

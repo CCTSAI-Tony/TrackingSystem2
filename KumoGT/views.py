@@ -5,6 +5,7 @@ from django.core.files.storage import FileSystemStorage
 from django.http import FileResponse, HttpResponse, Http404, HttpResponseRedirect
 from django.contrib import messages
 from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
 
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.static import serve
@@ -54,17 +55,53 @@ def upload(request):
 
 
 @conditional_decorator(login_required(login_url='/login/'), not settings.DEBUG)
-def form_upload(request):
+def form_upload(request, id):
     if request.method == 'POST':
         form = create_doc_form(Deg_Plan_Doc)(request.POST, request.FILES)
         if form.is_valid():
+            form.save(commit=False)
             form.save()
+            student = Student.objects.get(id=id)
             return redirect('home')
     else:
         form = create_doc_form(Deg_Plan_Doc)
+        document = Deg_Plan_Doc.objects.all()
     return render(request, 'form_upload.html', {
-        'form': form
+        'form': form,
+        'document': document,
     })
+
+@conditional_decorator(login_required(login_url='/login/'), not settings.DEBUG)
+def doc_upload(request, id):
+    student = Student.objects.get(id = id)
+    if request.method == 'POST':
+        form = create_doc_form(Deg_Plan_Doc)(request.POST, request.FILES)
+        if form.is_valid():
+            doc = form.save(commit=False)
+            doc.stu = student
+            doc.save()
+            return redirect('doc_upload', id=id)
+    else:
+        student = Student.objects.get(id = id)
+        form = create_doc_form(Deg_Plan_Doc)
+    return render(request, 'form_upload.html', {
+        'form': form,
+        'student': student,
+    })
+
+@conditional_decorator(login_required(login_url='/login/'), not settings.DEBUG)
+def doc_remove(request,id):
+    doc = Deg_Plan_Doc.objects.get(id = id)
+    stu_id = doc.stu.id
+    if request.method == "POST":
+        
+        doc.delete()
+    
+    return redirect('doc_upload',id=stu_id)
+
+
+
+
 
 
 @conditional_decorator(login_required(login_url='/login/'), not settings.DEBUG)
@@ -282,7 +319,7 @@ def session_note(request, stu_id, option='', id=0):
 def serve_protected_document(request, file_path):
     try:
         if file_path[0:6] != 'media/' or '../' in file_path:
-            raise PermissionError
+            raise IOError
         file_path = os.path.join(settings.BASE_DIR, file_path)
         with open(file_path, 'rb') as fh:
             content = Cryptographer.decrypted(fh.read())
@@ -311,8 +348,8 @@ def students(request, **kwargs):  # uin, first_name, last_name, gender, status, 
         if kwargs:
             students = students.filter(**seach_dict)
         students = students.order_by('uin')
-        if not students:
-            return render(request,'NotFind.html')
+        # if not students:
+        #     return render(request,'NotFind.html')
         form = stu_search_form(search_form_params)
         paginator = Paginator(students, 20)  # Show 20 students per page. Use 1 for test.
         page = request.GET.get('page')
@@ -568,7 +605,7 @@ class Tmp_File(object):
 def get_tmp_file(request, file_path, content_type):
     try:
         if file_path[0:10] == 'documents/' or '../' in file_path:
-            raise PermissionError
+            raise IOError
         file_path = os.path.join(settings.MEDIA_ROOT, file_path)
         fh = Tmp_File(file_path)
         content = fh.open('rb')

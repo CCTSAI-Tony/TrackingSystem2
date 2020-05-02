@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 #import django_heroku
 
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -24,10 +26,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '^k=sr#6vw7&+huh-q*a7e1(e3)^4$=(xf+u^fw4$y_b70!s*07'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "192.168.0.121", "127.0.0.1", 'orbital-builder-269722.appspot.com']
+ALLOWED_HOSTS = ["localhost", "192.168.0.121", "127.0.0.1", 'united-strategy-275206.uc.r.appspot.com']
 CSRF_COOKIE_SECURE = True
+
+
 
 # Application definition
 
@@ -38,8 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'gdstorage',
     'KumoGT',
+    
 ]
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -53,18 +62,25 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'TrackingSystem.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'KumoGT/templates/registration')],
-        'APP_DIRS': True,
+        # 'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                
             ],
+        'debug': True,
+        'loaders': [
+               'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+        ]
         },
     },
 ]
@@ -78,43 +94,37 @@ EMAIL_BACKEND = 'TrackingSystem.email_backend.SendGridEmailpipBackEnd'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-# if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine/'):
-#     # Running on production App Engine, so connect to Google Cloud SQL using
-#     # the unix socket at /cloudsql/<your-cloudsql-connection string>
-#     #print("in gae")
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'HOST': '/cloudsql/orbital-builder-269722:europe-west2:polls-instance',
-#             'USER': 'root',
-#             'PASSWORD': 'GodBlessWuhan',
-#             'NAME': 'TrackingSystem',
-#         }
-#     }
-# else:
-#     # Running locally so connect to either a local MySQL instance or connect to
-#     # Cloud SQL via the proxy. To start the proxy via command line:
-#     #
-#     #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:3306
-#     #
-#     # See https://cloud.google.com/sql/docs/mysql-connect-proxy
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'HOST': '127.0.0.1',
-#             'PORT': '3306',
-#             'NAME': 'TrackingSystem',
-#             'USER': 'root',
-#             'PASSWORD': 'GodBlessWuhan',
-#         }
-#     }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine/'):
+    # Running on production App Engine, so connect to Google Cloud SQL using
+    # the unix socket at /cloudsql/<your-cloudsql-connection string>
+    #print("in gae")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '/cloudsql/united-strategy-275206:us-central1:godblesswuhan',
+            'USER': 'root',
+            'PASSWORD': 'GodBlessWuhan',
+            'NAME': 'TrackingSystem',
+        }
     }
-}
+else:
+    # Running locally so connect to either a local MySQL instance or connect to
+    # Cloud SQL via the proxy. To start the proxy via command line:
+    #
+    #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:3306
+    #
+    # See https://cloud.google.com/sql/docs/mysql-connect-proxy
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+            'NAME': 'TrackingSystem',
+            'USER': 'root',
+            'PASSWORD': 'GodBlessWuhan',
+        }
+    }
+
 
 
 # Password validation
@@ -161,3 +171,29 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'KumoGT/static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #django_heroku.settings(locals())
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+# TEMPLATE_LOADERS = (
+#     'django.template.loaders.filesystem.Loader',
+#     'django.template.loaders.app_directories.Loader',
+# )
+
+
+# GOOGLE_DRIVE_STORAGE_SERVICE_EMAIL = 'united-strategy-275206@appspot.gserviceaccount.com'
+# GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = [os.path.join(BASE_DIR, "united-strategy-275206-f96ca3ce4746.json")],
+GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = "united-strategy-275206-f96ca3ce4746.json",
+
+# GOOGLE_DRIVE_STORAGE = {
+#     'service_account':{
+#         'email': "united-strategy-275206@appspot.gserviceaccount.com",
+#         'private_key_file_path': ("gdstorage.json"),
+
+#     }
+# }
+
+# 'DIRS': [os.path.join(BASE_DIR, 'KumoGT/templates/registration')],
